@@ -6,7 +6,7 @@ package com.application.beans;
  *
  */
 public class Group {
-	private int idGroup;
+	private long idGroup;
 	private String name;
 	/**
 	 * Constructor
@@ -17,7 +17,7 @@ public class Group {
 	/**
 	 * @return idGroup
 	 */
-	public int getIdGroup() {
+	public long getIdGroup() {
 		return idGroup;
 	}
 	/**
