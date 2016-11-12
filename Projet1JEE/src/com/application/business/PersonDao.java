@@ -5,6 +5,11 @@ import java.util.Collection;
 import com.application.beans.Group;
 import com.application.beans.Person;
 
+/**
+ * 
+ * @author HOUMED, ABDOULRAHIM
+ *
+ */
 public interface PersonDao {
 		/**
 		 * @return  existing group list in the database
@@ -33,19 +38,19 @@ public interface PersonDao {
 	    * @param p
 	    * this method add a person in database
 	    */
-	   void savePerson(Person p) throws DaoException;
+	   int savePerson(Person p) throws DaoException;
 
 	   /**
 	    * @param g
 	    *  this method  add a group in database
 	    */
-	   void saveGroup(Group g) throws DaoException;
+	   int saveGroup(Group g) throws DaoException;
 	   
 	   /**
 	    * @param idPerson
 	    * this method edit a person whose the id is passed as a parameter
 	    */
-	   void editPerson(long idPerson) throws DaoException;
+	   int editPerson(long idPerson, Person p) throws DaoException;
 	   
 	   
 	   

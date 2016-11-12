@@ -23,7 +23,7 @@ public class Group {
 	/**
 	 * @param idGroup
 	 */
-	public void setIdGroup(int idGroup) {
+	public void setIdGroup(long idGroup) {
 		this.idGroup = idGroup;
 	}
 	/**

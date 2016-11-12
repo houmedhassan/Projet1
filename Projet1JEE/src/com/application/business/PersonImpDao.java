@@ -1,5 +1,7 @@
 package com.application.business;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -10,11 +12,17 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 
 import com.application.beans.Group;
 import com.application.beans.Person;
 
+/**
+ * 
+ * @author HOUMED, ABDOULRAHIM
+ *
+ */
 @Service("personannuaireDao")
 public class PersonImpDao implements PersonDao{
 
@@ -45,49 +53,107 @@ public class PersonImpDao implements PersonDao{
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-	
+    
+    
+    final private RowMapper<Person> personMapper = new RowMapper<Person>(){
+    	@Override
+		public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
+			// TODO Auto-generated method stub
+			Person person =new Person();
+			person.setIdPerson(rs.getLong("idPerson"));
+			person.setLastName(rs.getString("lastName"));
+			person.setFirstName(rs.getString("firstName"));
+			person.setMail(rs.getString("mail"));
+			person.setWebSite(rs.getString("webSite"));
+			person.setBirthDay(rs.getString("birthDay"));
+			person.setPassword(rs.getString("password"));
+			person.setIdGroup(rs.getString("idGroup"));
+			return person;
+    	}
+    };
+    
+    final private RowMapper<Group> groupMapper = new RowMapper<Group>(){
+		@Override
+		public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
+			// TODO Auto-generated method stub
+			Group group =new Group();
+			group.setIdGroup(rs.getLong("idGroup"));
+			group.setName(rs.getString("name"));
+			return group;
+		}
+	};
+    
+    
 	@Override
 	public Collection<Group> findAllGroups() throws DaoException {
 		// TODO Auto-generated method stub
-		return null;
+		return this.jdbcTemplate.query("SELECT * FROM GROUP", groupMapper);
 	}
 
 	@Override
 	public Collection<Person> findAllPersons(long groupId) throws DaoException {
 		// TODO Auto-generated method stub
-		String sql = "SELECT * FROM personne where idGroup='"+groupId+"'";
-		Collection<Person> listPerson = this.jdbcTemplate.query(sql, new BeanPropertyRowMapper(Person.class));
-		return listPerson;
+		String sql = "SELECT * FROM PERSON WHERE idGroup=?";
+		
+		return this.jdbcTemplate.query(sql, new Object[]{groupId}, personMapper);
 	}
 	
 	@Override
 	public Person findPerson(long idPerson) throws DaoException {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Group findGroup(long GroupId) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void savePerson(Person p) throws DaoException {
-		// TODO Auto-generated method stub
+		Person person = this.jdbcTemplate.queryForObject("SELECT * FROM PERSON WHERE IDPERSON=?",
+		new Object[]{idPerson},
+		personMapper
+		);
+		return person;
 		
 	}
 
 	@Override
-	public void saveGroup(Group g) throws DaoException {
+	public Group findGroup(long groupId) throws DaoException {
 		// TODO Auto-generated method stub
+		Group group = this.jdbcTemplate.queryForObject("SELECT * FROM GROUP WHERE IDGROUP=?",
+				new Object[]{groupId},
+				groupMapper);
+		return group;
+	}
+
+	@Override
+	public int savePerson(Person p) throws DaoException {
+		// TODO Auto-generated method stub
+		String sql="INSERT INTO PERSON VALUES("
+						+ "'"+p.getIdPerson()+"','"
+						+"'"+p.getLastName()+"',"
+						+"'"+p.getFirstName()+"',"
+						+"'"+p.getMail()+"',"
+						+"'"+p.getWebSite()+"',"
+						+"'"+p.getBirthDay()+"',"
+						+"'"+p.getPassword()+"',"
+						+"'"+p.getIdGroup()+"'"
+					+")";
+		return this.jdbcTemplate.update(sql);
 		
 	}
 
 	@Override
-	public void editPerson(long idPerson) throws DaoException {
+	public int saveGroup(Group g) throws DaoException {
 		// TODO Auto-generated method stub
-		
+		String sql="INSERT INTO GROUP VALUES("
+						+ "'"+g.getIdGroup()+"',"
+						+ "'"+g.getName()+"'"
+					+ ")";
+		return this.jdbcTemplate.update(sql);
+	}
+
+	@Override
+	public int editPerson(long idPerson, Person p) throws DaoException {
+		// TODO Auto-generated method stub
+		String sql="UPDATE PERSON set lastName = ?, firstName=?, mail=?, "
+					+ "webSite=?, birthDay=?, password=?, idGroup=?   where idPerson='"+idPerson+"'";
+		return this.jdbcTemplate.update(sql, p.getLastName(), p.getFirstName(), p.getMail(), 
+										p.getWebSite(), p.getBirthDay(),p.getPassword(), p.getIdGroup() );
 	}
 
 }
+
+
