@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import com.application.beans.Group;
@@ -23,7 +24,7 @@ import com.application.beans.Person;
  * @author HOUMED, ABDOULRAHIM
  *
  */
-@Service("personannuaireDao")
+@Service
 public class PersonImpDao implements PersonDao{
 
 	JdbcTemplate jdbcTemplate;
